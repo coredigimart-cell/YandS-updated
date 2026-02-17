@@ -1,6 +1,5 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getAuth, browserSessionPersistence, setPersistence } from "firebase/auth";
-import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -18,9 +17,6 @@ export const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getA
 // Initialize Firebase Auth with SESSION persistence (user logs out when browser/tab closes)
 export const auth = getAuth(app);
 setPersistence(auth, browserSessionPersistence).catch(console.error);
-
-// Initialize Firebase Storage
-export const storage = getStorage(app);
 
 // Initialize Firestore
 export const db = getFirestore(app);

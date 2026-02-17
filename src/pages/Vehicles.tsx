@@ -31,7 +31,6 @@ import {
   updateVehicleInFirestore, 
   deleteVehicleFromFirestore 
 } from '@/lib/firestoreService';
-import { uploadBase64Image, getVehicleImagePath, deleteImage } from '@/lib/firebaseStorage';
 import { Vehicle } from '@/types/rental';
 
 const carBrands = [
