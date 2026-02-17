@@ -38,3 +38,11 @@ externalPort = 80
 deploymentTarget = "static"
 build = ["npm", "run", "build"]
 publicDir = "dist"
+
+[userenv]
+
+[userenv.shared]
+CLOUDFLARE_ACCOUNT_ID = "44d4456b745dd8beda2339160d9329fc"
+CLOUDFLARE_ACCESS_KEY_ID = "b99ff022a9a73cce89beb3c1904eb0ce"
+CLOUDFLARE_SECRET_ACCESS_KEY = "9cc39a878dff88adf6ebdebc64c2025b27060ebfd1f8fca6ca3a1d89108d4e1f"
+CLOUDFLARE_BUCKET_NAME = "yands-appfiles"
