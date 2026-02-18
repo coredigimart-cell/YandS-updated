@@ -162,7 +162,7 @@ export const formatCurrency = (amount: number): string => {
     currency: 'PKR',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(amount);
+  }).format(amount || 0);
 };
 
 export const formatDate = (dateString: string): string => {

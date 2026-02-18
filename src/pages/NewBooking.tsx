@@ -32,6 +32,7 @@ import {
   formatCurrency 
 } from '@/lib/storage';
 import { getVehiclesOnce, addRentalToFirestore } from '@/lib/firestoreService';
+import { saveBookingToR2, uploadToR2 } from '@/lib/r2Storage';
 import { Client, Vehicle, Witness, RentType, PaymentStatus, Rental } from '@/types/rental';
 import { toast } from 'sonner';
 
@@ -321,6 +322,18 @@ const NewBooking = () => {
     };
 
     try {
+      // Upload images to R2 first
+      if (rentalData.client.photo) rentalData.client.photo = await uploadToR2(rentalData.client.photo, `clients/${rentalData.client.id}_photo.png`);
+      if (rentalData.client.cnicFrontImage) rentalData.client.cnicFrontImage = await uploadToR2(rentalData.client.cnicFrontImage, `clients/${rentalData.client.id}_cnic_front.png`);
+      if (rentalData.client.cnicBackImage) rentalData.client.cnicBackImage = await uploadToR2(rentalData.client.cnicBackImage, `clients/${rentalData.client.id}_cnic_back.png`);
+      if (rentalData.vehicle.image) rentalData.vehicle.image = await uploadToR2(rentalData.vehicle.image, `vehicles/${rentalData.vehicle.id}.png`);
+      if (rentalData.clientSignature) rentalData.clientSignature = await uploadToR2(rentalData.clientSignature, `signatures/${rentalData.client.id}_client.png`);
+      if (rentalData.ownerSignature) rentalData.ownerSignature = await uploadToR2(rentalData.ownerSignature, `signatures/${rentalData.client.id}_owner.png`);
+
+      // Save complete rental data to R2
+      await saveBookingToR2(rentalData);
+
+      // Also save to Firestore for indexing/listing
       const rentalId = await addRentalToFirestore(rentalData);
       setShowSuccess(true);
       localStorage.setItem('last_rental_id', rentalId);

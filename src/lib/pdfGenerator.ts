@@ -103,12 +103,19 @@ export const generateInvoicePDF = (rental: Rental): void => {
         /* Header Section */
         .header { 
           display: flex; 
-          justify-content: space-between; 
-          align-items: flex-start;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
           padding-bottom: 20px; 
           margin-bottom: 20px; 
-          border-bottom: 4px solid;
-          border-image: linear-gradient(90deg, ${BRAND_ORANGE} 0%, ${BRAND_RED} 100%) 1;
+          border-bottom: 4px solid ${BRAND_ORANGE};
+        }
+        .logo-img { 
+          height: 80px; 
+          width: auto; 
+          object-fit: contain; 
+          margin-bottom: 12px;
+          filter: drop-shadow(0 2px 4px rgba(244, 124, 44, 0.2));
         }
         .logo-section { display: flex; align-items: center; gap: 12px; }
         .logo-img { 
@@ -479,13 +486,15 @@ export const generateInvoicePDF = (rental: Rental): void => {
       ${(() => {
         const company = getCompanyInfo();
         return `
-      <div class="header" style="flex-direction: column; align-items: center; text-align: center;">
-        <img src="${window.location.origin}/src/assets/brand-logo.png" alt="Yousif & Sons Rent A Car" style="height: 80px; width: auto; object-fit: contain; margin-bottom: 12px;" onerror="this.style.display='none'" />
+      <div class="header">
+        <img src="/src/assets/brand-logo.png" alt="Yousif & Sons Rent A Car" class="logo-img" />
+        <div class="company-name">Yousif & Sons Rent A Car</div>
+        <div class="tagline">Your Ride, Your Way!</div>
         ${company.phone ? `<div style="font-size: 11px; color: ${BRAND_GRAY_500}; margin-top: 4px;">📞 ${company.phone}${company.phone2 ? ` | ${company.phone2}` : ''}</div>` : ''}
         ${company.address ? `<div style="font-size: 10px; color: ${BRAND_GRAY_500};">📍 ${company.address}</div>` : ''}
         <div style="margin-top: 12px;">
-          <div class="agreement-label">Rental Agreement</div>
-          <div class="agreement-title">AGREEMENT</div>
+          <div class="agreement-label" style="color: ${BRAND_ORANGE}; font-weight: 700;">Rental Agreement</div>
+          <div class="agreement-title" style="background: ${BRAND_ORANGE}; -webkit-text-fill-color: white; -webkit-background-clip: initial; padding: 4px 12px; border-radius: 4px;">AGREEMENT</div>
           <div class="agreement-number">#${displayAgreementNumber}</div>
           <div class="agreement-date">${formatDate(rental.createdAt)}</div>
         </div>
