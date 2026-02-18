@@ -33,6 +33,7 @@ import {
 } from '@/lib/storage';
 import { getVehiclesOnce, addRentalToFirestore } from '@/lib/firestoreService';
 import { saveBookingToR2, uploadToR2 } from '@/lib/r2Storage';
+import { saveRental } from '@/lib/storage';
 import { Client, Vehicle, Witness, RentType, PaymentStatus, Rental } from '@/types/rental';
 import { toast } from 'sonner';
 
@@ -332,10 +333,18 @@ const NewBooking = () => {
       if (rentalData.ownerSignature) rentalData.ownerSignature = await uploadToR2(rentalData.ownerSignature, `signatures/${rentalData.client.id}_owner.png`);
 
       // Save complete rental data to R2
-      await saveBookingToR2(rentalData);
+      try {
+        await saveBookingToR2(rentalData);
+      } catch (r2Error) {
+        console.error('R2 backup failed, continuing with Firestore:', r2Error);
+      }
 
       // Also save to Firestore for indexing/listing
       const rentalId = await addRentalToFirestore(rentalData);
+      
+      // Save to local storage for "All Rentals" view
+      saveRental({ ...rentalData, id: rentalId });
+
       setShowSuccess(true);
       localStorage.setItem('last_rental_id', rentalId);
     } catch (error: any) {

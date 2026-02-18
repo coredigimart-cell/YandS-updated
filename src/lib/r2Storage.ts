@@ -1,21 +1,31 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-const REGION = "auto";
-const ACCOUNT_ID = import.meta.env.VITE_CLOUDFLARE_ACCOUNT_ID;
-const ACCESS_KEY_ID = import.meta.env.VITE_CLOUDFLARE_ACCESS_KEY_ID;
-const SECRET_ACCESS_KEY = import.meta.env.VITE_CLOUDFLARE_SECRET_ACCESS_KEY;
-const BUCKET_NAME = import.meta.env.VITE_CLOUDFLARE_BUCKET_NAME;
+const getS3Client = () => {
+  const ACCOUNT_ID = import.meta.env.VITE_CLOUDFLARE_ACCOUNT_ID;
+  const ACCESS_KEY_ID = import.meta.env.VITE_CLOUDFLARE_ACCESS_KEY_ID;
+  const SECRET_ACCESS_KEY = import.meta.env.VITE_CLOUDFLARE_SECRET_ACCESS_KEY;
+  const BUCKET_NAME = import.meta.env.VITE_CLOUDFLARE_BUCKET_NAME;
 
-const s3Client = new S3Client({
-  region: REGION,
-  endpoint: `https://${ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: ACCESS_KEY_ID,
-    secretAccessKey: SECRET_ACCESS_KEY,
-  },
-});
+  if (!ACCOUNT_ID || !ACCESS_KEY_ID || !SECRET_ACCESS_KEY || !BUCKET_NAME) {
+    console.error("Cloudflare R2 environment variables are missing");
+    return null;
+  }
+
+  return new S3Client({
+    region: "auto",
+    endpoint: `https://${ACCOUNT_ID}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: ACCESS_KEY_ID,
+      secretAccessKey: SECRET_ACCESS_KEY,
+    },
+  });
+};
 
 export const uploadToR2 = async (file: File | Blob | string, path: string): Promise<string> => {
+  const s3Client = getS3Client();
+  if (!s3Client) return typeof file === 'string' ? file : '';
+
+  const BUCKET_NAME = import.meta.env.VITE_CLOUDFLARE_BUCKET_NAME;
   let body: Buffer | Uint8Array | Blob | string;
   let contentType: string | undefined;
 
@@ -44,6 +54,10 @@ export const uploadToR2 = async (file: File | Blob | string, path: string): Prom
 };
 
 export const saveBookingToR2 = async (data: any): Promise<void> => {
+  const s3Client = getS3Client();
+  if (!s3Client) return;
+
+  const BUCKET_NAME = import.meta.env.VITE_CLOUDFLARE_BUCKET_NAME;
   const path = `bookings/${data.id || Date.now()}.json`;
   const command = new PutObjectCommand({
     Bucket: BUCKET_NAME,
