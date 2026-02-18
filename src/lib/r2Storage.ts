@@ -48,8 +48,6 @@ export const uploadToR2 = async (file: File | Blob | string, path: string): Prom
   });
 
   await s3Client.send(command);
-  // Note: R2 public access depends on bucket configuration. 
-  // For simplicity, we return the path or a constructed public URL if configured.
   return `https://pub-your-worker-id.r2.dev/${path}`; 
 };
 
