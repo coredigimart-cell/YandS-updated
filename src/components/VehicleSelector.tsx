@@ -221,6 +221,7 @@ export interface VehicleSelection {
   year: string;
   color: string;
   logo: string;
+  carNumber: string;
 }
 
 interface VehicleSelectorProps {
@@ -313,6 +314,14 @@ export const VehicleSelector = ({ value, onChange }: VehicleSelectorProps) => {
     });
     // Focus next input
     setTimeout(() => yearInputRef.current?.focus(), 100);
+  };
+
+  const handleCarNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.toUpperCase();
+    onChange({
+      ...value,
+      carNumber: val,
+    });
   };
 
   const handleColorSelect = (color: typeof colorSuggestions[0]) => {
@@ -438,6 +447,24 @@ export const VehicleSelector = ({ value, onChange }: VehicleSelectorProps) => {
 
       {/* Form Fields */}
       <div className="grid gap-6">
+        {/* Step 0: Car Number */}
+        <div className="relative">
+          <Label htmlFor="car-number" className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+            <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">0</span>
+            Car Number / Plate Number
+          </Label>
+          <div className="relative mt-2">
+            <Car className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+            <Input
+              id="car-number"
+              placeholder="e.g., LEW-1234 or ABC-123"
+              value={value.carNumber || ''}
+              onChange={handleCarNumberChange}
+              className="pl-12 h-14 text-base font-bold uppercase tracking-widest rounded-xl border-2 border-border bg-background focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+            />
+          </div>
+        </div>
+
         {/* Step 1: Brand & Model */}
         <div className="relative">
           <Label htmlFor="vehicle-search" className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">

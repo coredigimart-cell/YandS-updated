@@ -529,6 +529,7 @@ export const generateInvoicePDF = (rental: Rental): void => {
           <div class="vehicle-info">
             <span class="vehicle-brand">${rental.vehicle.brand || 'Vehicle'}</span>
             <p class="vehicle-name">${rental.vehicle.brand} ${rental.vehicle.model}</p>
+            <div style="font-size: 14px; font-weight: 800; color: ${BRAND_GRAY_800}; margin-top: 4px; letter-spacing: 1px;">🚗 REG #: ${rental.vehicle.carNumber || 'N/A'}</div>
             <div class="vehicle-badges">
               ${rental.vehicle.year ? `<span class="vehicle-badge badge-year">📅 ${rental.vehicle.year}</span>` : ''}
               ${rental.vehicle.color ? `<span class="vehicle-badge badge-color">🎨 ${rental.vehicle.color}</span>` : ''}

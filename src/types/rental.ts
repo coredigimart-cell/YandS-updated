@@ -24,6 +24,7 @@ export interface Vehicle {
   hourlyRate: number;
   weeklyRate: number;
   monthlyRate: number;
+  carNumber?: string;
 }
 
 export interface Witness {

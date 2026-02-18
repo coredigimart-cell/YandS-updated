@@ -72,6 +72,7 @@ const NewBooking = () => {
     year: '',
     color: '',
     logo: '',
+    carNumber: '',
   });
   
   const [rentalDetails, setRentalDetails] = useState({
@@ -554,6 +555,7 @@ const NewBooking = () => {
                     year: selection.year,
                     color: selection.color,
                     logo: selection.logo,
+                    carNumber: selection.carNumber,
                     image: '',
                     hourlyRate: 500,
                     dailyRate: 3000,

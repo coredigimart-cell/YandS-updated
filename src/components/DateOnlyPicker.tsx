@@ -37,11 +37,8 @@ function DateOnlyPicker({
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (selectedDate) {
-      // Create a date that represents the start of the day in local time
-      const year = selectedDate.getFullYear();
-      const month = selectedDate.getMonth();
-      const day = selectedDate.getDate();
-      const localDate = new Date(year, month, day);
+      // Create a date at noon local time to avoid timezone shifts
+      const localDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate(), 12, 0, 0);
       setTempDate(localDate);
     } else {
       setTempDate(undefined);
