@@ -375,8 +375,12 @@ const NewBooking = () => {
       console.log("Saving booking to LocalStorage...");
       saveRental(finalRentalData);
 
+      // Force a small delay to ensure LocalStorage is written
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       setShowSuccess(true);
       localStorage.setItem('last_rental_id', rentalId);
+      console.log("Success: Booking completed with ID:", rentalId);
       toast.success('Booking saved successfully!');
     } catch (error: any) {
       console.error('CRITICAL: Failed to save rental:', error);

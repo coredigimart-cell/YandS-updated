@@ -33,15 +33,32 @@ const Invoice = () => {
 
   useEffect(() => {
     if (id) {
+      console.log("Invoice: Loading agreement ID:", id);
       // Subscribe to real-time updates for rentals
       const unsubscribe = subscribeToRentals((rentals) => {
         const found = rentals.find(r => r.id === id);
         if (found) {
+          console.log("Invoice: Found in Firestore:", found.id);
           setRental(found);
           setAdvancePayment(found.advancePayment);
           setAgreementNumber(found.agreementNumber || '');
+          setLoading(false);
+        } else {
+          // Fallback to LocalStorage if not in Firestore yet
+          const localRentals = JSON.parse(localStorage.getItem('yousif_sons_rentals') || '[]');
+          const localFound = localRentals.find((r: any) => r.id === id);
+          if (localFound) {
+            console.log("Invoice: Found in LocalStorage:", localFound.id);
+            setRental(localFound);
+            setAdvancePayment(localFound.advancePayment);
+            setAgreementNumber(localFound.agreementNumber || '');
+            setLoading(false);
+          } else {
+            console.warn("Invoice: Agreement not found in Firestore or LocalStorage for ID:", id);
+            // Don't stop loading immediately, maybe it's still syncing
+            setTimeout(() => setLoading(false), 2000);
+          }
         }
-        setLoading(false);
       });
 
       return () => unsubscribe();
