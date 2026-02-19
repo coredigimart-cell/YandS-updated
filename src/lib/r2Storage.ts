@@ -6,8 +6,17 @@ const getS3Client = () => {
   const SECRET_ACCESS_KEY = import.meta.env.VITE_CLOUDFLARE_SECRET_ACCESS_KEY;
   const BUCKET_NAME = import.meta.env.VITE_CLOUDFLARE_BUCKET_NAME;
 
+  console.log("Checking R2 Config:", {
+    hasAccountId: !!ACCOUNT_ID,
+    hasAccessKey: !!ACCESS_KEY_ID,
+    hasSecretKey: !!SECRET_ACCESS_KEY,
+    hasBucket: !!BUCKET_NAME
+  });
+
   if (!ACCOUNT_ID || !ACCESS_KEY_ID || !SECRET_ACCESS_KEY || !BUCKET_NAME) {
-    console.error("Cloudflare R2 environment variables are missing");
+    console.error("Cloudflare R2 environment variables are missing. Current keys found:", 
+      Object.keys(import.meta.env).filter(key => key.includes('CLOUDFLARE'))
+    );
     return null;
   }
 

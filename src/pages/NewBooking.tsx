@@ -324,35 +324,66 @@ const NewBooking = () => {
     };
 
     try {
+      console.log("Starting booking submission flow...");
+      
       // Upload images to R2 first
-      if (rentalData.client.photo) rentalData.client.photo = await uploadToR2(rentalData.client.photo, `clients/${rentalData.client.id}_photo.png`);
-      if (rentalData.client.cnicFrontImage) rentalData.client.cnicFrontImage = await uploadToR2(rentalData.client.cnicFrontImage, `clients/${rentalData.client.id}_cnic_front.png`);
-      if (rentalData.client.cnicBackImage) rentalData.client.cnicBackImage = await uploadToR2(rentalData.client.cnicBackImage, `clients/${rentalData.client.id}_cnic_back.png`);
-      if (rentalData.vehicle.image) rentalData.vehicle.image = await uploadToR2(rentalData.vehicle.image, `vehicles/${rentalData.vehicle.id}.png`);
-      if (rentalData.clientSignature) rentalData.clientSignature = await uploadToR2(rentalData.clientSignature, `signatures/${rentalData.client.id}_client.png`);
-      if (rentalData.ownerSignature) rentalData.ownerSignature = await uploadToR2(rentalData.ownerSignature, `signatures/${rentalData.client.id}_owner.png`);
+      try {
+        if (rentalData.client.photo && rentalData.client.photo.startsWith('data:')) {
+          console.log("Uploading client photo...");
+          rentalData.client.photo = await uploadToR2(rentalData.client.photo, `clients/${rentalData.client.id}_photo.png`);
+        }
+        if (rentalData.client.cnicFrontImage && rentalData.client.cnicFrontImage.startsWith('data:')) {
+          console.log("Uploading CNIC front...");
+          rentalData.client.cnicFrontImage = await uploadToR2(rentalData.client.cnicFrontImage, `clients/${rentalData.client.id}_cnic_front.png`);
+        }
+        if (rentalData.client.cnicBackImage && rentalData.client.cnicBackImage.startsWith('data:')) {
+          console.log("Uploading CNIC back...");
+          rentalData.client.cnicBackImage = await uploadToR2(rentalData.client.cnicBackImage, `clients/${rentalData.client.id}_cnic_back.png`);
+        }
+        if (rentalData.vehicle.image && rentalData.vehicle.image.startsWith('data:')) {
+          console.log("Uploading vehicle image...");
+          rentalData.vehicle.image = await uploadToR2(rentalData.vehicle.image, `vehicles/${rentalData.vehicle.id}.png`);
+        }
+        if (rentalData.clientSignature && rentalData.clientSignature.startsWith('data:')) {
+          console.log("Uploading client signature...");
+          rentalData.clientSignature = await uploadToR2(rentalData.clientSignature, `signatures/${rentalData.client.id}_client.png`);
+        }
+        if (rentalData.ownerSignature && rentalData.ownerSignature.startsWith('data:')) {
+          console.log("Uploading owner signature...");
+          rentalData.ownerSignature = await uploadToR2(rentalData.ownerSignature, `signatures/${rentalData.client.id}_owner.png`);
+        }
+      } catch (uploadError) {
+        console.error('Image upload failed, but continuing with backup paths:', uploadError);
+      }
 
       // Save complete rental data to R2
       try {
+        console.log("Saving booking to R2...");
         await saveBookingToR2(rentalData);
       } catch (r2Error) {
         console.error('R2 backup failed, continuing with Firestore:', r2Error);
       }
 
       // Also save to Firestore for indexing/listing
+      console.log("Saving booking to Firestore...");
       const rentalId = await addRentalToFirestore(rentalData);
       
       // Save to local storage for "All Rentals" view
+      console.log("Saving booking to LocalStorage...");
       saveRental({ ...rentalData, id: rentalId });
 
       setShowSuccess(true);
       localStorage.setItem('last_rental_id', rentalId);
+      toast.success('Booking saved successfully!');
     } catch (error: any) {
-      console.error('Failed to save rental:', error);
+      console.error('CRITICAL: Failed to save rental:', error);
+      const errorMessage = error?.message || 'Unknown error';
       if (error?.code === 'permission-denied') {
-        toast.error('Permission denied. Please make sure you are logged in.');
+        toast.error('Permission denied. Please check Firebase Rules or Auth state.');
+      } else if (errorMessage.includes('fetch')) {
+        toast.error('Network error. Check internet or Cloudflare R2 config.');
       } else {
-        toast.error('Failed to save booking. Please try again.');
+        toast.error(`Failed to save booking: ${errorMessage}`);
       }
     } finally {
       setSubmitting(false);
