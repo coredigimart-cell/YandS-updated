@@ -81,7 +81,12 @@ export const defaultVehicles: Vehicle[] = [
 export const getRentals = (): Rental[] => {
   try {
     const data = localStorage.getItem(RENTALS_KEY);
-    return data ? JSON.parse(data) : [];
+    const rentals: Rental[] = data ? JSON.parse(data) : [];
+    
+    // Sort by date (newest first)
+    return rentals.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   } catch {
     return [];
   }
@@ -89,8 +94,16 @@ export const getRentals = (): Rental[] => {
 
 export const saveRental = (rental: Rental): void => {
   const rentals = getRentals();
-  rentals.push(rental);
+  const index = rentals.findIndex(r => r.id === rental.id);
+  
+  if (index !== -1) {
+    rentals[index] = rental;
+  } else {
+    rentals.push(rental);
+  }
+  
   localStorage.setItem(RENTALS_KEY, JSON.stringify(rentals));
+  console.log("Local Storage: Saved rental", rental.id);
 };
 
 export const updateRental = (rental: Rental): void => {

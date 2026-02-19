@@ -43,9 +43,11 @@ export const subscribeToRentals = (callback: (rentals: Rental[]) => void) => {
 export const addRentalToFirestore = async (rental: Omit<Rental, 'id'>): Promise<string> => {
   try {
     console.log("Firestore: Adding rental document...");
+    // Ensure all data is serializable for Firestore
+    const cleanData = JSON.parse(JSON.stringify(rental));
     const docRef = await addDoc(collection(db, RENTALS_COLLECTION), {
-      ...rental,
-      createdAt: rental.createdAt || new Date().toISOString(),
+      ...cleanData,
+      createdAt: cleanData.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString()
     });
     console.log("Firestore: Success, ID:", docRef.id);

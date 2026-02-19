@@ -62,6 +62,7 @@ const Invoice = () => {
 
   const handlePrint = () => {
     if (rental) {
+      console.log("Printing agreement:", rental.id);
       generateInvoicePDF(rental);
     }
   };
@@ -69,12 +70,15 @@ const Invoice = () => {
   const handleDownloadPDF = async () => {
     if (rental && !isDownloading) {
       setIsDownloading(true);
+      console.log("Downloading PDF for agreement:", rental.id);
       try {
         await downloadPDFDirect(rental);
         toast.success('PDF downloaded successfully!');
       } catch (error) {
         console.error('Download error:', error);
         toast.error('Failed to download PDF. Try Print instead.');
+        // Fallback to print method if direct download fails
+        generateInvoicePDF(rental);
       } finally {
         setIsDownloading(false);
       }

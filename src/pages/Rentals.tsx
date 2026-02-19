@@ -168,7 +168,7 @@ const Rentals = () => {
                           </div>
                           <div>
                             <p className="font-medium text-foreground">{rental.vehicle.name}</p>
-                            <p className="text-sm text-muted-foreground">{rental.vehicle.type}</p>
+                            <p className="text-sm text-muted-foreground">{rental.vehicle.carNumber || rental.vehicle.type}</p>
                           </div>
                         </div>
                       </td>
@@ -227,7 +227,7 @@ const Rentals = () => {
                   </div>
                   <div className="flex-1">
                     <p className="font-medium text-foreground">{rental.client.fullName}</p>
-                    <p className="text-sm text-muted-foreground">{rental.vehicle.name}</p>
+                    <p className="text-sm text-muted-foreground">{rental.vehicle.name} {rental.vehicle.carNumber ? `(${rental.vehicle.carNumber})` : ''}</p>
                   </div>
                   <span className={`${
                     rental.paymentStatus === 'paid' ? 'badge-success' :

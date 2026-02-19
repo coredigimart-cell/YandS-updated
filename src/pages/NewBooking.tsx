@@ -368,9 +368,12 @@ const NewBooking = () => {
       console.log("Saving booking to Firestore...");
       const rentalId = await addRentalToFirestore(rentalData);
       
+      // Update rentalData with the ID from Firestore/Local
+      const finalRentalData = { ...rentalData, id: rentalId };
+
       // Save to local storage for "All Rentals" view
       console.log("Saving booking to LocalStorage...");
-      saveRental({ ...rentalData, id: rentalId });
+      saveRental(finalRentalData);
 
       setShowSuccess(true);
       localStorage.setItem('last_rental_id', rentalId);
