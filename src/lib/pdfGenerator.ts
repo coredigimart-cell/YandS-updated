@@ -84,523 +84,361 @@ export const generateInvoicePDF = (rental: Rental): void => {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Agreement - ${displayAgreementNumber}</title>
-      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
+      <title>Rental Agreement - ${displayAgreementNumber}</title>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
       <style>
+        :root {
+          --primary: ${BRAND_ORANGE};
+          --primary-dark: ${BRAND_RED};
+          --text-main: ${BRAND_GRAY_800};
+          --text-muted: ${BRAND_GRAY_500};
+          --border: ${BRAND_GRAY_200};
+          --bg-light: ${BRAND_GRAY_50};
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
           font-family: 'Inter', sans-serif; 
-          color: ${BRAND_GRAY_800};
-          line-height: 1.6;
-          padding: 24px;
-          max-width: 800px;
+          color: var(--text-main);
+          line-height: 1.4;
+          padding: 30px;
+          max-width: 900px;
           margin: 0 auto;
           background: white;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
         }
         
-        /* Header Section */
         .header { 
           display: flex; 
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
+          justify-content: space-between;
+          align-items: flex-start;
           padding-bottom: 20px; 
-          margin-bottom: 20px; 
-          border-bottom: 4px solid ${BRAND_ORANGE};
+          margin-bottom: 25px; 
+          border-bottom: 5px solid var(--primary);
         }
-        .logo-img { 
-          height: 80px; 
-          width: auto; 
-          object-fit: contain; 
-          margin-bottom: 12px;
-          filter: drop-shadow(0 2px 4px rgba(244, 124, 44, 0.2));
+        .brand-section { display: flex; align-items: center; gap: 20px; }
+        .logo-container {
+          width: 80px;
+          height: 80px;
+          background: var(--primary);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
         }
-        .logo-section { display: flex; align-items: center; gap: 12px; }
-        .logo-img { 
-          width: 64px; 
-          height: 64px; 
-          object-fit: contain;
-        }
+        .logo-img { width: 100%; height: 100%; object-fit: contain; padding: 5px; }
+        .company-info { text-align: left; }
         .company-name { 
           font-family: 'Playfair Display', serif; 
-          font-size: 22px; 
-          font-weight: 700; 
-          color: ${BRAND_GRAY_800};
-        }
-        .company-sub { color: ${BRAND_GRAY_500}; font-size: 12px; margin-top: 2px; }
-        .tagline { font-size: 10px; color: ${BRAND_ORANGE}; font-style: italic; margin-top: 2px; }
-        .agreement-info { text-align: right; }
-        .agreement-label {
-          font-size: 10px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: ${BRAND_GRAY_500};
+          font-size: 32px; 
+          color: var(--primary);
           margin-bottom: 2px;
         }
-        .agreement-title { 
-          font-size: 24px; 
-          font-weight: 700; 
-          background: linear-gradient(90deg, ${BRAND_ORANGE} 0%, ${BRAND_RED} 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        .agreement-number { font-size: 14px; font-weight: 600; color: ${BRAND_GRAY_800}; margin-top: 2px; }
-        .agreement-date { color: ${BRAND_GRAY_500}; font-size: 11px; margin-top: 2px; }
+        .company-tagline { font-weight: 600; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Section Styles */
-        .section { margin-bottom: 16px; }
-        .section-title { 
-          font-weight: 600; 
-          font-size: 12px;
-          color: ${BRAND_GRAY_800}; 
-          margin-bottom: 10px; 
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          padding-bottom: 6px;
-          border-bottom: 2px solid ${BRAND_GRAY_200};
-        }
-        
-        /* Two Column Layout */
-        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-        
-        /* Info Box */
-        .info-box { 
-          background: ${BRAND_GRAY_50};
-          border-radius: 10px; 
-          padding: 14px;
-          border: 1px solid ${BRAND_GRAY_200};
-        }
-        .info-box p { margin-bottom: 3px; }
-        .info-box-title {
-          font-weight: 700;
-          font-size: 13px;
-          color: ${BRAND_GRAY_800};
+        .agreement-badge-container { text-align: right; }
+        .agreement-badge {
+          background: var(--primary);
+          color: white;
+          padding: 8px 20px;
+          border-radius: 8px;
+          font-weight: 800;
+          font-size: 20px;
           margin-bottom: 8px;
-          padding-bottom: 6px;
-          border-bottom: 1px solid ${BRAND_GRAY_200};
-        }
-        .info-label { color: ${BRAND_GRAY_500}; font-size: 11px; }
-        .info-value { font-weight: 600; font-size: 12px; color: ${BRAND_GRAY_800}; }
-        
-        /* Vehicle Box */
-        .vehicle-box { 
-          background: ${BRAND_GRAY_50};
-          border: 2px solid ${BRAND_GRAY_200};
-          border-radius: 12px; 
-          padding: 14px; 
-          display: flex;
-          align-items: center;
-          gap: 14px;
-        }
-        .vehicle-logo {
-          width: 50px;
-          height: 50px;
-          border-radius: 10px;
-          background: linear-gradient(90deg, ${BRAND_ORANGE} 0%, ${BRAND_RED} 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: bold;
-          font-size: 18px;
-          flex-shrink: 0;
-        }
-        .vehicle-image {
-          width: 80px;
-          height: 50px;
-          border-radius: 8px;
-          object-fit: cover;
-          border: 2px solid ${BRAND_GRAY_200};
-        }
-        .vehicle-info { flex: 1; }
-        .vehicle-brand {
           display: inline-block;
-          padding: 2px 10px;
-          background: linear-gradient(90deg, ${BRAND_ORANGE} 0%, ${BRAND_RED} 100%);
-          color: white;
-          border-radius: 14px;
-          font-size: 10px;
-          font-weight: 600;
-          margin-bottom: 4px;
         }
-        .vehicle-name { font-weight: 700; font-size: 14px; color: ${BRAND_GRAY_800}; }
-        .vehicle-badges { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
-        .vehicle-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 3px;
-          padding: 3px 8px;
-          border-radius: 12px;
-          font-size: 10px;
-          font-weight: 500;
-        }
-        .badge-year { background: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; }
-        .badge-color { background: #fae8ff; border: 1px solid #e879f9; color: #a21caf; }
-        .badge-type { background: #dcfce7; border: 1px solid #86efac; color: #15803d; }
-        
-        /* Rental Period */
-        .period-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .period-box {
-          border-radius: 10px;
-          padding: 12px;
-          text-align: center;
-        }
-        .period-delivery {
-          background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-          border: 2px solid #6ee7b7;
-        }
-        .period-return {
-          background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-          border: 2px solid #fca5a5;
-        }
-        .period-icon {
-          width: 28px;
-          height: 28px;
-          border-radius: 8px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 6px;
-          font-size: 14px;
-        }
-        .period-delivery .period-icon { background: #10b981; color: white; }
-        .period-return .period-icon { background: ${BRAND_RED}; color: white; }
-        .period-label {
-          font-size: 10px;
-          color: ${BRAND_GRAY_500};
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-bottom: 4px;
-        }
-        .period-date { font-weight: 700; font-size: 12px; color: ${BRAND_GRAY_800}; }
-        .period-time { font-weight: 600; font-size: 11px; margin-top: 2px; }
-        .period-delivery .period-time { color: #059669; }
-        .period-return .period-time { color: ${BRAND_RED}; }
-        .rent-type-badge { 
-          display: inline-block;
-          padding: 4px 14px;
-          background: linear-gradient(90deg, ${BRAND_ORANGE}20 0%, ${BRAND_RED}20 100%);
-          color: ${BRAND_GRAY_800}; 
-          border-radius: 18px;
-          font-size: 11px;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          margin-top: 10px;
-          border: 1px solid ${BRAND_ORANGE}40;
-        }
-        
-        /* Documents Grid */
-        .documents-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 10px;
-        }
-        .document-box {
-          background: ${BRAND_GRAY_50};
-          border: 1px solid ${BRAND_GRAY_200};
-          border-radius: 10px;
-          padding: 8px;
-          text-align: center;
-        }
-        .document-label {
-          font-weight: 600;
-          font-size: 9px;
-          color: ${BRAND_ORANGE};
-          margin-bottom: 6px;
-          text-transform: uppercase;
-          letter-spacing: 0.3px;
-        }
-        .document-img {
-          width: 100%;
-          max-height: 80px;
-          object-fit: contain;
-          border-radius: 6px;
-          background: white;
-        }
-        
-        /* Payment Section */
-        .payment-section {
-          background: ${BRAND_GRAY_50};
-          border-radius: 10px;
-          padding: 12px;
-          border: 2px solid ${BRAND_GRAY_200};
-        }
-        .payment-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 8px 0;
-          border-bottom: 1px solid ${BRAND_GRAY_200};
-        }
-        .payment-row:last-child { border-bottom: none; }
-        .payment-row.total {
-          background: linear-gradient(90deg, ${BRAND_ORANGE} 0%, ${BRAND_RED} 100%);
-          color: white;
-          margin: 10px -12px -12px -12px;
-          padding: 12px;
-          border-radius: 0 0 8px 8px;
-        }
-        .payment-label { color: ${BRAND_GRAY_500}; font-size: 12px; }
-        .payment-value { font-weight: 600; font-size: 13px; color: ${BRAND_GRAY_800}; }
-        .payment-value.success { color: #16a34a; }
-        .payment-value.danger { color: ${BRAND_RED}; }
-        .payment-row.total .payment-label,
-        .payment-row.total .payment-value { color: white; }
-        
-        /* Status Badges */
-        .status-badge { 
-          display: inline-block;
-          padding: 4px 12px;
-          border-radius: 16px;
-          font-size: 10px;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-        }
-        .status-paid { background: #16a34a; color: white; }
-        .status-pending { background: ${BRAND_RED}; color: white; }
-        .status-partial { background: ${BRAND_ORANGE}; color: white; }
-        
-        /* Notes */
-        .notes-box { 
-          background: ${BRAND_GRAY_50};
-          padding: 12px; 
-          border-radius: 8px;
-          color: ${BRAND_GRAY_500};
-          border-left: 4px solid ${BRAND_ORANGE};
-          font-size: 12px;
-          line-height: 1.5;
-        }
+        .agreement-no { font-size: 16px; font-weight: 700; }
+        .agreement-date { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
 
-        /* Urdu Terms Section */
-        .urdu-section { margin-top: 20px; }
-        .urdu-terms-box {
-          background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-          border: 2px solid ${BRAND_ORANGE};
-          border-radius: 12px;
-          padding: 16px;
-          font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', serif;
-        }
-        .urdu-title {
-          font-size: 16px;
-          font-weight: 700;
-          color: ${BRAND_RED};
-          text-align: center;
-          margin-bottom: 12px;
-          padding-bottom: 8px;
-          border-bottom: 2px solid ${BRAND_ORANGE};
-        }
-        .urdu-list {
-          list-style-type: decimal;
-          padding-right: 24px;
-          padding-left: 0;
-        }
-        .urdu-term {
-          font-size: 12px;
-          color: ${BRAND_GRAY_800};
-          line-height: 2.2;
-          margin-bottom: 6px;
-          text-align: right;
-        }
-
-        /* Signature Section */
-        .signature-section {
+        .main-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 32px;
-          margin-top: 24px;
-          padding-top: 16px;
-        }
-        .signature-box {
-          text-align: center;
-        }
-        .signature-line {
-          border-bottom: 2px dashed ${BRAND_GRAY_500};
-          height: 50px;
-          margin-bottom: 8px;
-        }
-        .signature-label {
-          font-size: 11px;
-          font-weight: 500;
-          color: ${BRAND_GRAY_500};
-        }
-        .signature-urdu {
-          font-size: 10px;
-          color: ${BRAND_GRAY_500};
-          font-family: 'Noto Nastaliq Urdu', serif;
-          direction: rtl;
+          gap: 20px;
+          margin-bottom: 25px;
         }
         
-        /* Footer */
-        .footer { 
-          border-top: 2px solid ${BRAND_GRAY_200}; 
-          padding-top: 16px; 
-          margin-top: 20px; 
-          text-align: center;
+        .card {
+          border: 1.5px solid var(--border);
+          border-radius: 12px;
+          overflow: hidden;
+          background: white;
         }
-        .footer-brand {
-          font-family: 'Playfair Display', serif;
-          font-size: 14px;
+        .card-header {
+          background: var(--bg-light);
+          padding: 10px 15px;
+          font-weight: 800;
+          font-size: 12px;
+          text-transform: uppercase;
+          color: var(--primary);
+          border-bottom: 1.5px solid var(--border);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .card-body { padding: 15px; }
+        
+        .data-item { display: flex; margin-bottom: 8px; font-size: 13px; border-bottom: 1px solid var(--bg-light); padding-bottom: 4px; }
+        .data-label { color: var(--text-muted); width: 100px; flex-shrink: 0; font-weight: 600; }
+        .data-value { font-weight: 700; color: var(--text-main); }
+        
+        .vehicle-hero {
+          background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+          color: white;
+          border-radius: 15px;
+          padding: 20px;
+          display: flex;
+          align-items: center;
+          gap: 25px;
+          margin-bottom: 25px;
+          box-shadow: 0 10px 20px rgba(244, 124, 44, 0.15);
+        }
+        .vehicle-img-wrap {
+          width: 180px;
+          height: 110px;
+          background: white;
+          border-radius: 10px;
+          padding: 5px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .vehicle-img-large { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
+        .vehicle-text { flex: 1; }
+        .vehicle-title { font-size: 24px; font-weight: 800; margin-bottom: 5px; }
+        .vehicle-reg { font-size: 32px; font-weight: 900; letter-spacing: 2px; border: 2px dashed rgba(255,255,255,0.5); padding: 5px 15px; display: inline-block; border-radius: 8px; }
+        
+        .timeline {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 15px;
+          margin-bottom: 25px;
+        }
+        .timeline-box {
+          padding: 15px;
+          border-radius: 12px;
+          text-align: center;
+          position: relative;
+        }
+        .out { background: #f0fdf4; border: 2px solid #bbf7d0; }
+        .in { background: #fef2f2; border: 2px solid #fecaca; }
+        .timeline-label { font-size: 11px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; }
+        .out .timeline-label { color: #16a34a; }
+        .in .timeline-label { color: #dc2626; }
+        .timeline-val { font-size: 16px; font-weight: 800; }
+        
+        .check-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 8px;
+        }
+        .check-pill {
+          background: var(--bg-light);
+          border: 1px solid var(--border);
+          padding: 6px 10px;
+          border-radius: 20px;
+          font-size: 11px;
           font-weight: 600;
-          color: ${BRAND_GRAY_800};
-          margin-bottom: 2px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
         }
-        .footer-tagline {
-          font-size: 11px;
-          color: ${BRAND_ORANGE};
-          font-style: italic;
-        }
-        .footer-thanks {
-          margin-top: 10px;
-          font-size: 10px;
-          color: ${BRAND_GRAY_500};
-        }
+        .check-dot { color: var(--primary); font-size: 14px; }
         
-        /* Print Styles */
-        .page-break-avoid { page-break-inside: avoid; }
+        .payment-card {
+          background: var(--bg-light);
+          border: 2px solid var(--primary);
+          border-radius: 12px;
+          overflow: hidden;
+        }
+        .payment-table { width: 100%; border-collapse: collapse; }
+        .payment-table td { padding: 12px 20px; font-size: 14px; border-bottom: 1px solid var(--border); }
+        .payment-table tr:last-child td { border-bottom: none; }
+        .val-col { text-align: right; font-weight: 800; font-size: 16px; }
+        .highlight-row { background: var(--primary); color: white; }
+        .highlight-row td { border-color: transparent; }
+        .highlight-row .val-col { font-size: 22px; }
         
+        .urdu-wrapper {
+          margin-top: 25px;
+          padding: 20px;
+          background: #fffcf5;
+          border: 2px solid #ffeeba;
+          border-radius: 15px;
+          direction: rtl;
+          font-family: 'Noto Nastaliq Urdu', serif;
+        }
+        .urdu-title-main { font-size: 20px; font-weight: 700; color: var(--primary-dark); margin-bottom: 10px; text-align: center; border-bottom: 1px solid #ffeeba; padding-bottom: 5px; }
+        .urdu-content { font-size: 14px; line-height: 2.2; color: #333; text-align: justify; }
+        
+        .signatures {
+          margin-top: 40px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 60px;
+        }
+        .sig-box { text-align: center; }
+        .sig-space { 
+          border-bottom: 3px solid var(--text-main); 
+          height: 70px; 
+          margin-bottom: 10px; 
+          display: flex;
+          align-items: flex-end;
+          justify-content: center;
+        }
+        .sig-image { max-height: 60px; max-width: 250px; object-fit: contain; }
+        .sig-title { font-weight: 800; font-size: 14px; color: var(--primary); text-transform: uppercase; }
+
+        .gallery {
+          margin-top: 25px;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 15px;
+        }
+        .gallery-item {
+          border: 1.5px solid var(--border);
+          border-radius: 10px;
+          padding: 5px;
+          background: white;
+          text-align: center;
+        }
+        .gallery-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
+        .gallery-label { font-size: 9px; font-weight: 700; margin-top: 5px; color: var(--text-muted); text-transform: uppercase; }
+
         @media print {
-          body { padding: 12px; }
-          @page { margin: 0.3in; size: A4; }
-          .header, .logo, .payment-row.total, .status-badge, .vehicle-brand, .rent-type-badge, .urdu-terms-box {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-          .documents-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-          .document-img {
-            max-height: 100px;
-          }
+          body { padding: 0; }
+          .no-print { display: none; }
+          @page { margin: 0.5cm; size: A4; }
         }
       </style>
     </head>
     <body>
-      ${(() => {
-        const company = getCompanyInfo();
-        return `
       <div class="header">
-        <img src="/src/assets/brand-logo.png" alt="Yousif & Sons Rent A Car" class="logo-img" />
-        <div class="company-name">Yousif & Sons Rent A Car</div>
-        <div class="tagline">Your Ride, Your Way!</div>
-        ${company.phone ? `<div style="font-size: 11px; color: ${BRAND_GRAY_500}; margin-top: 4px;">📞 ${company.phone}${company.phone2 ? ` | ${company.phone2}` : ''}</div>` : ''}
-        ${company.address ? `<div style="font-size: 10px; color: ${BRAND_GRAY_500};">📍 ${company.address}</div>` : ''}
-        <div style="margin-top: 12px;">
-          <div class="agreement-label" style="color: ${BRAND_ORANGE}; font-weight: 700;">Rental Agreement</div>
-          <div class="agreement-title" style="background: ${BRAND_ORANGE}; -webkit-text-fill-color: white; -webkit-background-clip: initial; padding: 4px 12px; border-radius: 4px;">AGREEMENT</div>
-          <div class="agreement-number">#${displayAgreementNumber}</div>
-          <div class="agreement-date">${formatDate(rental.createdAt)}</div>
-        </div>
-      </div>`;
-      })()}
-
-      <div class="two-col section">
-        <div class="info-box">
-          <div class="info-box-title">👤 Client Details</div>
-          <p class="info-value" style="font-size: 14px; margin-bottom: 6px;">${rental.client.fullName}</p>
-          <p class="info-label">CNIC: <span class="info-value">${rental.client.cnic}</span></p>
-          <p class="info-label">📞 <span class="info-value">${rental.client.phone}</span></p>
-          <p class="info-label">📍 <span class="info-value" style="font-size: 11px;">${rental.client.address}</span></p>
-        </div>
-        <div class="info-box">
-          <div class="info-box-title">👥 Witness Details</div>
-          <p class="info-value" style="font-size: 14px; margin-bottom: 6px;">${rental.witness.name}</p>
-          <p class="info-label">CNIC: <span class="info-value">${rental.witness.cnic}</span></p>
-          <p class="info-label">📞 <span class="info-value">${rental.witness.phone}</span></p>
-          <p class="info-label">📍 <span class="info-value" style="font-size: 11px;">${rental.witness.address}</span></p>
-        </div>
-      </div>
-
-      <div class="section page-break-avoid">
-        <div class="section-title">🚗 Vehicle Details</div>
-        <div class="vehicle-box">
-          ${rental.vehicle.image ? `
-            <img src="${rental.vehicle.image}" alt="${rental.vehicle.name}" class="vehicle-image" onerror="this.style.display='none'">
-          ` : `
-            <div class="vehicle-logo">${rental.vehicle.brand?.charAt(0) || 'V'}</div>
-          `}
-          <div class="vehicle-info">
-            <span class="vehicle-brand">${rental.vehicle.brand || 'Vehicle'}</span>
-            <p class="vehicle-name">${rental.vehicle.brand} ${rental.vehicle.model}</p>
-            <div style="font-size: 14px; font-weight: 800; color: ${BRAND_GRAY_800}; margin-top: 4px; letter-spacing: 1px;">🚗 REG #: ${rental.vehicle.carNumber || 'N/A'}</div>
-            <div class="vehicle-badges">
-              ${rental.vehicle.year ? `<span class="vehicle-badge badge-year">📅 ${rental.vehicle.year}</span>` : ''}
-              ${rental.vehicle.color ? `<span class="vehicle-badge badge-color">🎨 ${rental.vehicle.color}</span>` : ''}
-              ${rental.vehicle.type ? `<span class="vehicle-badge badge-type">🚗 ${rental.vehicle.type}</span>` : ''}
+        <div class="brand-section">
+          <div class="logo-container">
+            <img src="https://raw.githubusercontent.com/yousif-sons/assets/main/logo-orange.png" onerror="this.src='/src/assets/brand-logo.png'" class="logo-img" />
+          </div>
+          <div class="company-info">
+            <h1 class="company-name">Yousif & Sons</h1>
+            <p class="company-tagline">Rent A Car & Travel Management</p>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px; font-weight: 500;">
+              📍 Office #1, Ground Floor, Plaza 101, Blue Area, Islamabad<br>
+              📞 +92 300 1234567 | ✉️ bookings@yousifsons.com
             </div>
           </div>
         </div>
-      </div>
-
-      <div class="section page-break-avoid">
-        <div class="section-title">📅 Rental Period</div>
-        <div class="period-grid">
-          <div class="period-box period-delivery">
-            <div class="period-icon">📦</div>
-            <div class="period-label">Delivery</div>
-            <div class="period-date">📅 ${formatDate(rental.deliveryDate)}</div>
-            <div class="period-time">⏰ ${formatTime(rental.deliveryTime)}</div>
-          </div>
-          <div class="period-box period-return">
-            <div class="period-icon">📥</div>
-            <div class="period-label">Return</div>
-            <div class="period-date">📅 ${formatDate(rental.returnDate)}</div>
-            <div class="period-time">⏰ ${formatTime(rental.returnTime)}</div>
-          </div>
-        </div>
-        <div style="text-align: center;">
-          <span class="rent-type-badge">${rental.rentType.toUpperCase()} RENTAL</span>
+        <div class="agreement-badge-container">
+          <div class="agreement-badge">AGREEMENT</div>
+          <div class="agreement-no">Ref: #${displayAgreementNumber}</div>
+          <div class="agreement-date">Issued: ${formatDate(rental.createdAt)}</div>
         </div>
       </div>
 
-      ${clientImagesHtml}
-
-      <div class="section page-break-avoid">
-        <div class="section-title">💳 Payment Details</div>
-        <div class="payment-section">
-          <div class="payment-row">
-            <span class="payment-label">Total Rental Amount</span>
-            <span class="payment-value">${formatCurrency(rental.totalAmount)}</span>
-          </div>
-          <div class="payment-row">
-            <span class="payment-label">Advance Payment Received</span>
-            <span class="payment-value success">${formatCurrency(rental.advancePayment)}</span>
-          </div>
-          <div class="payment-row">
-            <span class="payment-label">Balance Due</span>
-            <span class="payment-value danger">${formatCurrency(rental.balance)}</span>
-          </div>
-          <div class="payment-row total">
-            <span class="payment-label"><strong>Payment Status</strong></span>
-            <span class="status-badge status-${rental.paymentStatus}">${rental.paymentStatus.toUpperCase()}</span>
+      <div class="vehicle-hero">
+        <div class="vehicle-img-wrap">
+          ${rental.vehicle.image ? `<img src="${rental.vehicle.image}" class="vehicle-img-large" />` : `<div style="font-size:40px; font-weight:900; color:var(--primary);">${rental.vehicle.brand?.charAt(0)}</div>`}
+        </div>
+        <div class="vehicle-text">
+          <div class="vehicle-title">${rental.vehicle.brand} ${rental.vehicle.model} | ${rental.vehicle.year}</div>
+          <div class="vehicle-reg">${rental.vehicle.carNumber || 'N/A'}</div>
+          <div style="margin-top:10px; font-weight:600; font-size:14px; opacity:0.9;">
+            Type: ${rental.vehicle.type} • Color: ${rental.vehicle.color}
           </div>
         </div>
       </div>
 
-      ${rental.notes ? `
-        <div class="section page-break-avoid">
-          <div class="section-title">📝 Additional Notes</div>
-          <div class="notes-box">${rental.notes}</div>
-        </div>
-      ` : ''}
-
-      ${rental.accessories ? `
-        <div class="section page-break-avoid">
-          <div class="section-title">🔧 Accessories Checklist</div>
-          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-            ${Object.entries(rental.accessories).filter(([_, v]) => v).map(([key]) => `
-              <span style="padding: 4px 12px; background: #dcfce7; border: 1px solid #86efac; border-radius: 16px; font-size: 11px; color: #166534;">✓ ${key.replace(/([A-Z])/g, ' $1').trim()}</span>
-            `).join('')}
+      <div class="main-grid">
+        <div class="card">
+          <div class="card-header">👤 Client Information</div>
+          <div class="card-body">
+            <div class="data-item"><span class="data-label">Full Name</span><span class="data-value">${rental.client.fullName}</span></div>
+            <div class="data-item"><span class="data-label">CNIC No</span><span class="data-value">${rental.client.cnic}</span></div>
+            <div class="data-item"><span class="data-label">Phone</span><span class="data-value">${rental.client.phone}</span></div>
+            <div class="data-item"><span class="data-label">Address</span><span class="data-value">${rental.client.address}</span></div>
           </div>
         </div>
-      ` : ''}
+        <div class="card">
+          <div class="card-header">👥 Witness Details</div>
+          <div class="card-body">
+            <div class="data-item"><span class="data-label">Full Name</span><span class="data-value">${rental.witness.name}</span></div>
+            <div class="data-item"><span class="data-label">CNIC No</span><span class="data-value">${rental.witness.cnic}</span></div>
+            <div class="data-item"><span class="data-label">Phone</span><span class="data-value">${rental.witness.phone}</span></div>
+            <div class="data-item"><span class="data-label">Address</span><span class="data-value">${rental.witness.address}</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-box out">
+          <div class="timeline-label">Delivery (Check Out)</div>
+          <div class="timeline-val">${formatDate(rental.deliveryDate)} • ${formatTime(rental.deliveryTime)}</div>
+        </div>
+        <div class="timeline-box in">
+          <div class="timeline-label">Return (Check In)</div>
+          <div class="timeline-val">${formatDate(rental.returnDate)} • ${formatTime(rental.returnTime)}</div>
+        </div>
+      </div>
+
+      <div class="main-grid">
+        <div class="card">
+          <div class="card-header">🔧 Equipment & State</div>
+          <div class="card-body">
+            <div class="check-grid" style="margin-bottom:15px;">
+              ${rental.accessories ? Object.entries(rental.accessories).filter(([_, v]) => v).map(([key]) => `<div class="check-pill"><span class="check-dot">●</span>${key.replace(/([A-Z])/g, ' $1').trim()}</div>`).join('') : 'None'}
+            </div>
+            <div class="data-item"><span class="data-label">Fuel Level</span><span class="data-value">${rental.vehicleCondition?.fuelLevel || 'N/A'}</span></div>
+            <div class="data-item"><span class="data-label">Odometer</span><span class="data-value">${rental.vehicleCondition?.odometerReading || 'N/A'} KM</span></div>
+          </div>
+        </div>
+        <div class="payment-card">
+          <div class="card-header" style="background:transparent; border-bottom:1px solid rgba(0,0,0,0.1);">💰 Payment Summary</div>
+          <table class="payment-table">
+            <tr><td>Total Amount (${rental.rentType})</td><td class="val-col">${formatCurrency(rental.totalAmount)}</td></tr>
+            <tr><td>Advance Payment</td><td class="val-col" style="color:#16a34a;">-${formatCurrency(rental.advancePayment)}</td></tr>
+            <tr class="highlight-row"><td><strong>BALANCE DUE</strong></td><td class="val-col">${formatCurrency(rental.balance)}</td></tr>
+          </table>
+        </div>
+      </div>
+
+      ${clientImages.length > 0 ? `
+      <div class="gallery">
+        ${clientImages.map(img => `
+          <div class="gallery-item">
+            <img src="${img.src}" class="gallery-img" />
+            <div class="gallery-label">${img.label}</div>
+          </div>
+        `).join('')}
+      </div>` : ''}
+
+      <div class="urdu-wrapper">
+        <h2 class="urdu-title-main">شرائط و ضوابط (Terms & Conditions)</h2>
+        <div class="urdu-content">
+          میں اقرار کرتا ہوں کہ میں نے گاڑی درست حالت میں اور تمام لوازمات کے ساتھ وصول کی ہے۔ کرایہ کی مدت کے دوران کسی بھی قسم کے ٹریفک چالان، حادثہ یا فنی خرابی کی صورت میں تمام تر اخراجات اور ذمہ داری مجھ پر ہوگی۔ میں مقررہ وقت پر گاڑی واپس کرنے کا پابند ہوں، بصورت دیگر کمپنی کو اضافی کرایہ وصول کرنے اور قانونی کارروائی کرنے کا مکمل حق حاصل ہے۔
+        </div>
+      </div>
+
+      <div class="signatures">
+        <div class="sig-box">
+          <div class="sig-space">
+            ${rental.clientSignature ? `<img src="${rental.clientSignature}" class="sig-image" />` : ''}
+          </div>
+          <div class="sig-title">Client Signature</div>
+        </div>
+        <div class="sig-box">
+          <div class="sig-space">
+            ${rental.ownerSignature ? `<img src="${rental.ownerSignature}" class="sig-img" />` : ''}
+          </div>
+          <div class="sig-title">Authorized Signature</div>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:40px; font-size:10px; color:var(--text-muted); border-top:1px solid var(--border); padding-top:15px;">
+        This document is an electronic record generated by Yousif & Sons Management System.<br>
+        <strong>Your Ride, Your Way! - Thank you for choosing us.</strong>
+      </div>
+    </body>
+    </html>
+  `;
 
       ${rental.vehicleCondition ? `
         <div class="section page-break-avoid">
