@@ -271,7 +271,7 @@ export const generateInvoicePDF = (rental: Rental): void => {
           text-align: center;
         }
         .gallery-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
-        .gallery-label { font-size: 9px; font-weight: 700; margin-top: 5px; color: var(--text-muted); text-transform: uppercase; }
+        .gallery-label { font-size: 9px; font-weight: 700; margin-top: 5px; color: var(--text-muted); text-transform: uppercase; font-family: 'Inter', sans-serif; }
 
         @media print {
           body { padding: 0; }
@@ -381,7 +381,7 @@ export const generateInvoicePDF = (rental: Rental): void => {
       <div class="urdu-wrapper">
         <h2 class="urdu-title-main">شرائط و ضوابط (Terms & Conditions)</h2>
         <div class="urdu-content">
-          میں اقرار کرتا ہوں کہ میں نے گاڑی درست حالت میں اور تمام لوازمات کے ساتھ وصول کی ہے۔ کرایہ کی مدت کے دوران کسی بھی قسم کے ٹریفک چالان، حادثہ یا فنی خرابی کی صورت میں تمام تر اخراجات اور ذمہ داری مجھ پر ہوگی۔ میں مقررہ وقت پر گاڑی واپس کرنے کا پابند ہوں، بصورت دیگر کمپنی کو اضافی کرایہ وصول کرنے اور قانونی کارروائی کرنے کا مکمل حق حاصل ہے۔
+          ${URDU_TERMS_LIST.map((term, index) => `${index + 1}. ${term}`).join('<br>')}
         </div>
       </div>
 

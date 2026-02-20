@@ -51,6 +51,9 @@ export const addRentalToFirestore = async (rental: Omit<Rental, 'id'>): Promise<
       updatedAt: new Date().toISOString()
     });
     console.log("Firestore: Success, ID:", docRef.id);
+    // Force a local storage sync as well for immediate UI update
+    const existing = JSON.parse(localStorage.getItem('rentals') || '[]');
+    localStorage.setItem('rentals', JSON.stringify([{ id: docRef.id, ...cleanData }, ...existing]));
     return docRef.id;
   } catch (error: any) {
     console.error('Firestore: Error adding rental:', error);
